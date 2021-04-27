@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @GetMapping("/login_user")
-    public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest) throws Exception{
-        User user = userService.loginUser(loginRequest);
+    public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password) throws Exception{
+        User user = userService.loginUser(email, password);
         return new ResponseEntity<User> (user, HttpStatus.OK);
     }
 }
