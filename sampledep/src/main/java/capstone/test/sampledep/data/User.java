@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "sc_user")
-@JsonIgnoreProperties
+@JsonIgnoreProperties("password")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "sc_user_id_seq")

@@ -16,7 +16,7 @@ import java.util.Objects;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     public User getUserById(Long id) {
         return userRepository.findById(id).get();
