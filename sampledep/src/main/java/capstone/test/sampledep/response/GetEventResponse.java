@@ -18,6 +18,7 @@ public class GetEventResponse {
     private String scope;
     @JsonProperty("remainining_spots")
     private Long remainingSpots;
+    private User host;
     private List<User> attendees;
     @JsonProperty("participation_type")
     private String participationType;
@@ -102,6 +103,14 @@ public class GetEventResponse {
         this.participationType = participationType;
     }
 
+    public User getHost() {
+        return host;
+    }
+
+    public void setHost(User host) {
+        this.host = host;
+    }
+
     @Override
     public String toString() {
         return "GetEventResponse{" +
@@ -113,6 +122,7 @@ public class GetEventResponse {
                 ", limit=" + limit +
                 ", scope='" + scope + '\'' +
                 ", remainingSpots=" + remainingSpots +
+                ", host=" + host +
                 ", attendees=" + attendees +
                 ", participationType='" + participationType + '\'' +
                 '}';

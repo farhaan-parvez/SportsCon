@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "event")
+@Table(name = "sc_event")
 @JsonIgnoreProperties
 @Data
 public class Event {
@@ -22,7 +22,8 @@ public class Event {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "event_type")
+    @ManyToOne
+    @JoinColumn(name = "event_type")
     private EventType eventType;
 
     @Column(name = "description")
@@ -37,10 +38,11 @@ public class Event {
     @Column(name = "time")
     private LocalDateTime time;
 
-    @Column(name = "limit")
+    @Column(name = "max_participation")
     private Long limit;
 
     @Column(name = "scope")
+    @Enumerated(EnumType.STRING)
     private Scope scope;
 
     public Long getId() {

@@ -17,13 +17,16 @@ public class Participation {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user")
+    @ManyToOne
+    @JoinColumn(name = "sc_user")
     private User user;
 
-    @Column(name = "event")
+    @ManyToOne
+    @JoinColumn(name = "event")
     private Event event;
 
     @Column(name = "participation_type")
+    @Enumerated(EnumType.STRING)
     private ParticipationType participationType;
 
     public Long getId() {

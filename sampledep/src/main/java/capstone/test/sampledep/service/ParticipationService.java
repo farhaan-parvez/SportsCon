@@ -39,6 +39,9 @@ public class ParticipationService {
         Participation oldPart = participationRepository.findByUser_IdAndEvent_Id(userId, event.getId());
         if (Objects.nonNull(oldPart))
             throw new Exception("User cannot join, already part of event");
+        Long participants = participationRepository.findByEvent_Id(event.getId()).stream().count() -1 ;
+        if (Objects.equals(participants, event.getLimit()))
+            throw new Exception("Attendance limit reched");
         Participation participation = new Participation();
         participation.setEvent(event);
         participation.setParticipationType(ParticipationType.ATTENDEE);

@@ -1,5 +1,7 @@
 package capstone.test.sampledep.pojo;
 
+import java.util.Objects;
+
 public enum Scope {
 
         PUBLIC("public", 0),
@@ -22,7 +24,7 @@ public enum Scope {
 
         public static Scope findScopeByKey(String key) throws Exception{
             for(Scope scope : Scope.values()) {
-                if (key==scope.getKey())
+                if (Objects.equals(key, scope.getKey()))
                     return scope;
             }
             throw new Exception("No scope with key : " + key);

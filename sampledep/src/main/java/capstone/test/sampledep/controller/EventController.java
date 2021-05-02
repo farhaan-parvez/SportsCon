@@ -22,26 +22,32 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @PostMapping("/create_event/{user_id}")
-    public ResponseEntity<Event> registerEvent(@PathVariable("user_id") Long userId, @RequestBody CreateEventRequest createEventRequest) throws Exception{
+    @PostMapping("/create_event")
+    public ResponseEntity<Event> registerEvent(@RequestParam("user_id") Long userId, @RequestBody CreateEventRequest createEventRequest) throws Exception{
         Event event = eventService.createEvent(userId, createEventRequest);
         return new ResponseEntity<Event> (event, HttpStatus.OK);
     }
 
+    @PutMapping("/edit_event")
+    public ResponseEntity<Event> updateEvent(@RequestParam("user_id") Long userId, @RequestParam("event_id") Long eventId, @RequestBody CreateEventRequest createEventRequest) throws Exception{
+        Event event = eventService.updateEvent(userId, eventId, createEventRequest);
+        return new ResponseEntity<Event> (event, HttpStatus.OK);
+    }
+
     @PostMapping("/join_event")
-    public ResponseEntity<Participation> joinEvent(@Param("user_id") Long userId, @Param("event_id") Long eventId) throws Exception{
+    public ResponseEntity<Participation> joinEvent(@RequestParam("user_id") Long userId, @RequestParam("event_id") Long eventId) throws Exception{
         Participation participation = eventService.joinEvent(userId, eventId);
         return new ResponseEntity<Participation> (participation, HttpStatus.OK);
     }
 
     @GetMapping("/get_user_events")
-    public ResponseEntity<UserEventsResponse> getUserEvents(@Param("user_id") Long userId) throws Exception{
+    public ResponseEntity<UserEventsResponse> getUserEvents(@RequestParam("user_id") Long userId) throws Exception{
         UserEventsResponse userEventsResponse = eventService.getUserEvents(userId);
         return new ResponseEntity<UserEventsResponse>(userEventsResponse, HttpStatus.OK);
     }
 
     @GetMapping("/get_event")
-    public ResponseEntity<GetEventResponse> getEvent(@Param("user_id") Long userId, @Param("event_id") Long eventId) throws Exception{
+    public ResponseEntity<GetEventResponse> getEvent(@RequestParam ("user_id") Long userId, @RequestParam("event_id") Long eventId) throws Exception{
         GetEventResponse getEventResponse = eventService.getEvent(userId, eventId);
         return new ResponseEntity<GetEventResponse>(getEventResponse, HttpStatus.OK);
     }

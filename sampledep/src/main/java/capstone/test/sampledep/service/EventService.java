@@ -48,10 +48,11 @@ public class EventService {
 
     @Transactional
     public Event createEvent(Long userId, CreateEventRequest request) throws Exception{
-
+        if (Objects.isNull(userId))
+            throw new Exception("userId of host cannot be null");
+        if (StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getLocation()) || StringUtils.isEmpty(request.getEventType()) || StringUtils.isEmpty(request.getScope()))
+            throw new Exception("Event Name, Location, Event Type, Scope cannot be empty");
         Event event = new Event();
-        if (StringUtils.isEmpty(request.getName()))
-            throw new Exception("Event Name cannot be empty");
         event.setName(request.getName());
         event.setEventType(eventTypeRepository.findByType(request.getEventType()));
         event.setDescription(request.getDescription());
@@ -62,6 +63,30 @@ public class EventService {
         event.setScope(Scope.findScopeByKey(request.getScope()));
         Event savedEvent = eventRepository.save(event);
         Participation participation = participationService.createParticipationByHost(userId, savedEvent);
+        return savedEvent;
+    }
+
+    public Event updateEvent(Long userId, Long eventId, CreateEventRequest request) throws Exception{
+        if (Objects.isNull(userId))
+            throw new Exception("userId of host cannot be null");
+        if (StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getLocation()) || StringUtils.isEmpty(request.getEventType()) || StringUtils.isEmpty(request.getScope()))
+            throw new Exception("Event Name, Location, Event Type, Scope cannot be empty");
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (!optionalEvent.isPresent())
+            throw new Exception("No Such Event with Id : " + eventId);
+        Event event = optionalEvent.get();
+        Participation participation = participationRepository.findByUser_IdAndEvent_Id(userId, eventId);
+        if (Objects.isNull(participation) || !Objects.equals(participation.getParticipationType(), ParticipationType.HOST))
+            throw new Exception("Only the host of this event can edit it ");
+        event.setName(request.getName());
+        event.setEventType(eventTypeRepository.findByType(request.getEventType()));
+        event.setDescription(request.getDescription());
+        event.setLocation(request.getLocation());
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(request.getTime()), ZoneId.systemDefault());
+        event.setTime(localDateTime);
+        event.setLimit(request.getLimit());
+        event.setScope(Scope.findScopeByKey(request.getScope()));
+        Event savedEvent = eventRepository.save(event);
         return savedEvent;
     }
 
@@ -100,12 +125,15 @@ public class EventService {
         response.setTime(event.getTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         response.setEventType(event.getEventType().getType());
         response.setScope(event.getScope().getKey());
+        response.setLimit(event.getLimit());
         List<Participation> participationList = participationRepository.findByEvent_Id(eventId);
-        Long remainingSpots = event.getLimit() - participationList.size();
+        Long remainingSpots = event.getLimit() - participationList.size() + 1;
         response.setRemainingSpots(remainingSpots);
 
-        List<User> users = participationList.stream().map(Participation::getUser).collect(Collectors.toList());
-        response.setAttendees(users);
+        List<User> attendees = participationList.stream().filter(U -> U.getParticipationType() == ParticipationType.ATTENDEE).map(Participation::getUser).collect(Collectors.toList());
+        response.setAttendees(attendees);
+        User host = participationList.stream().filter(U -> U.getParticipationType() == ParticipationType.HOST).map(Participation::getUser).collect(Collectors.toList()).get(0);
+        response.setHost(host);
 
         Participation participation = participationRepository.findByUser_IdAndEvent_Id(userId, eventId);
         if (Objects.nonNull(participation))
