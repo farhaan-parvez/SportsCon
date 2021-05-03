@@ -79,7 +79,10 @@ public class EventService {
         if (Objects.isNull(participation) || !Objects.equals(participation.getParticipationType(), ParticipationType.HOST))
             throw new Exception("Only the host of this event can edit it ");
         event.setName(request.getName());
-        event.setEventType(eventTypeRepository.findByType(request.getEventType()));
+        EventType eventType = eventTypeRepository.findByType(request.getEventType());
+        if (Objects.isNull(eventType))
+            throw new Exception("No event type : " + request.getEventType());
+        event.setEventType(eventType);
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(request.getTime()), ZoneId.systemDefault());
@@ -119,6 +122,7 @@ public class EventService {
             throw new Exception("No event with id : " + eventId);
 
         Event event = optionalEvent.get();
+        response.setId(event.getId());
         response.setName(event.getName());
         response.setDescription(event.getDescription());
         response.setLocation(event.getLocation());

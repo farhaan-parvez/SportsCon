@@ -8,6 +8,7 @@ import java.util.List;
 
 @JsonIgnoreProperties
 public class GetEventResponse {
+    private Long id;
     private String name;
     @JsonProperty("event_type")
     private String eventType;
@@ -22,6 +23,14 @@ public class GetEventResponse {
     private List<User> attendees;
     @JsonProperty("participation_type")
     private String participationType;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -114,7 +123,8 @@ public class GetEventResponse {
     @Override
     public String toString() {
         return "GetEventResponse{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", eventType='" + eventType + '\'' +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
