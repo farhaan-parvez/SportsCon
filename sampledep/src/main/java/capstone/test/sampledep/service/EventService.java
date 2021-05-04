@@ -54,7 +54,11 @@ public class EventService {
             throw new Exception("Event Name, Location, Event Type, Scope cannot be empty");
         Event event = new Event();
         event.setName(request.getName());
-        event.setEventType(eventTypeRepository.findByType(request.getEventType()));
+        EventType eventType = eventTypeRepository.findByType(request.getEventType());
+        if (Objects.isNull(eventType))
+            throw new Exception("No event type : " + request.getEventType());
+        event.setEventType(eventType);
+//        event.setEventType(eventTypeRepository.findByType(request.getEventType()));
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(request.getTime()), ZoneId.systemDefault());
