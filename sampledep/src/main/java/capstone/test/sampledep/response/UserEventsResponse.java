@@ -1,5 +1,6 @@
 package capstone.test.sampledep.response;
 
+import capstone.test.sampledep.data.Event;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
@@ -7,22 +8,22 @@ import java.util.List;
 @JsonIgnoreProperties
 public class UserEventsResponse {
 
-    List<Long> hosted;
-    List<Long> joined;
+    List<Event> hosted;
+    List<Event> joined;
 
-    public List<Long> getHosted() {
+    public List<Event> getHosted() {
         return hosted;
     }
 
-    public void setHosted(List<Long> hosted) {
+    public void setHosted(List<Event> hosted) {
         this.hosted = hosted;
     }
 
-    public List<Long> getJoined() {
+    public List<Event> getJoined() {
         return joined;
     }
 
-    public void setJoined(List<Long> joined) {
+    public void setJoined(List<Event> joined) {
         this.joined = joined;
     }
 

@@ -8,6 +8,7 @@ import capstone.test.sampledep.request.CreateEventRequest;
 import capstone.test.sampledep.request.RegisterUserRequest;
 import capstone.test.sampledep.response.GetEventResponse;
 import capstone.test.sampledep.response.UserEventsResponse;
+import capstone.test.sampledep.response.UserEventsTimeResponse;
 import capstone.test.sampledep.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -41,9 +42,9 @@ public class EventController {
     }
 
     @GetMapping("/get_user_events")
-    public ResponseEntity<UserEventsResponse> getUserEvents(@RequestParam("user_id") Long userId) throws Exception{
-        UserEventsResponse userEventsResponse = eventService.getUserEvents(userId);
-        return new ResponseEntity<UserEventsResponse>(userEventsResponse, HttpStatus.OK);
+    public ResponseEntity<UserEventsTimeResponse> getUserEvents(@RequestParam("user_id") Long userId) throws Exception{
+        UserEventsTimeResponse userEventsResponse = eventService.getUserEvents(userId);
+        return new ResponseEntity<UserEventsTimeResponse>(userEventsResponse, HttpStatus.OK);
     }
 
     @GetMapping("/get_event")

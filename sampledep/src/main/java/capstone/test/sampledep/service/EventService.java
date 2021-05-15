@@ -13,6 +13,7 @@ import capstone.test.sampledep.repository.UserRepository;
 import capstone.test.sampledep.request.CreateEventRequest;
 import capstone.test.sampledep.response.GetEventResponse;
 import capstone.test.sampledep.response.UserEventsResponse;
+import capstone.test.sampledep.response.UserEventsTimeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -108,15 +109,25 @@ public class EventService {
         return participation;
     }
 
-    public UserEventsResponse getUserEvents(Long userId) {
-        List<Long> hostedEvents = participationRepository.findByUser_IdAndParticipationType(userId, ParticipationType.HOST)
-                .stream().map(Participation::getEvent).map(Event::getId).collect(Collectors.toList());
-        List<Long> joinedEvents = participationRepository.findByUser_IdAndParticipationType(userId, ParticipationType.ATTENDEE)
-                .stream().map(Participation::getEvent).map(Event::getId).collect(Collectors.toList());
-        UserEventsResponse userEventsResponse = new UserEventsResponse();
-        userEventsResponse.setHosted(hostedEvents);
-        userEventsResponse.setJoined(joinedEvents);
-        return userEventsResponse;
+    public UserEventsTimeResponse getUserEvents(Long userId) {
+        List<Event> hostedEvents = participationRepository.findByUser_IdAndParticipationType(userId, ParticipationType.HOST)
+                .stream().map(Participation::getEvent).collect(Collectors.toList());
+        List<Event> joinedEvents = participationRepository.findByUser_IdAndParticipationType(userId, ParticipationType.ATTENDEE)
+                .stream().map(Participation::getEvent).collect(Collectors.toList());
+        List<Event> futureHostedEvents = hostedEvents.stream().filter(event -> event.getTime().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+        List<Event> pastHostedEvents = hostedEvents.stream().filter(event -> event.getTime().isBefore(LocalDateTime.now())).collect(Collectors.toList());
+        List<Event> futureJoinedEvents = joinedEvents.stream().filter(event -> event.getTime().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+        List<Event> pastJoinedEvents = joinedEvents.stream().filter(event -> event.getTime().isBefore(LocalDateTime.now())).collect(Collectors.toList());
+        UserEventsResponse upcomingEvents = new UserEventsResponse();
+        upcomingEvents.setHosted(futureHostedEvents);
+        upcomingEvents.setJoined(futureJoinedEvents);
+        UserEventsResponse pastEvents = new UserEventsResponse();
+        pastEvents.setHosted(pastHostedEvents);
+        pastEvents.setJoined(pastJoinedEvents);
+        UserEventsTimeResponse userEventsTimeResponse = new UserEventsTimeResponse();
+        userEventsTimeResponse.setUpcomingEvents(upcomingEvents);
+        userEventsTimeResponse.setPastEvents(pastEvents);
+        return userEventsTimeResponse;
     }
 
     public GetEventResponse getEvent(Long userId, Long eventId) throws Exception{
