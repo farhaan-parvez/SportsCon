@@ -1,12 +1,15 @@
 package capstone.test.sampledep.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties
 public class UserEventRatings {
 
+    @JsonProperty("event_key")
     private String eventKey;
-    private Long rating;
+    private Double rating;
+    @JsonProperty("total_ratings")
     private Long totalRatings;
 
     public String getEventKey() {
@@ -17,11 +20,11 @@ public class UserEventRatings {
         this.eventKey = eventKey;
     }
 
-    public Long getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Long rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

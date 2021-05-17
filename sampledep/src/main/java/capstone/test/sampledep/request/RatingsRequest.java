@@ -1,10 +1,16 @@
 package capstone.test.sampledep.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class RatingsRequest {
 
+    @JsonProperty("event_id")
     private Long eventId;
+    @JsonProperty("social_rating")
     private Long socialRating;
+    @JsonProperty("skill_rating")
     private Long skillRating;
+    @JsonProperty("review")
     private String review;
 
     public Long getEventId() {
