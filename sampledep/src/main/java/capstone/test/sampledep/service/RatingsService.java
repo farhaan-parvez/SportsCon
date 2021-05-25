@@ -43,16 +43,18 @@ public class RatingsService {
         Optional<User> optionalRater = userRepository.findById(raterId);
         if (!optionalRater.isPresent())
             throw new Exception("No such user with id : " + raterId);
-        Ratings prevRatings = ratingsRepository.findByUser_IdAndRater_IdAndEvent_Id(userId, raterId, request.getEventId());
-        if(Objects.nonNull(prevRatings))
-            throw new Exception("User already rated by this rater for this event");
         Participation userParticipation = participationRepository.findByUser_IdAndEvent_Id(userId, request.getEventId());
         if (Objects.isNull(userParticipation))
             throw new Exception("User did not participate in this event " + userId + " " + request.getEventId());
         Participation raterParticipation = participationRepository.findByUser_IdAndEvent_Id(raterId, request.getEventId());
         if (Objects.isNull(raterParticipation))
             throw new Exception("Rater did not participate in this event " + raterId + " " + request.getEventId());
+        Ratings prevRatings = ratingsRepository.findByUser_IdAndRater_IdAndEvent_Id(userId, raterId, request.getEventId());
+//        if(Objects.nonNull(prevRatings))
+//            throw new Exception("User already rated by this rater for this event");
         Ratings ratings = new Ratings();
+        if (Objects.nonNull(prevRatings))
+            ratings = prevRatings;
         ratings.setEvent(optionalEvent.get());
         ratings.setUser(optionalUser.get());
         ratings.setRater(optionalRater.get());

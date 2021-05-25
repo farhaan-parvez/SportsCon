@@ -1,15 +1,9 @@
 package capstone.test.sampledep.service;
 
-import capstone.test.sampledep.data.Event;
-import capstone.test.sampledep.data.EventType;
-import capstone.test.sampledep.data.Participation;
-import capstone.test.sampledep.data.User;
+import capstone.test.sampledep.data.*;
 import capstone.test.sampledep.pojo.ParticipationType;
 import capstone.test.sampledep.pojo.Scope;
-import capstone.test.sampledep.repository.EventRepository;
-import capstone.test.sampledep.repository.EventTypeRepository;
-import capstone.test.sampledep.repository.ParticipationRepository;
-import capstone.test.sampledep.repository.UserRepository;
+import capstone.test.sampledep.repository.*;
 import capstone.test.sampledep.request.CreateEventRequest;
 import capstone.test.sampledep.response.GetEventResponse;
 import capstone.test.sampledep.response.UserEventsResponse;
@@ -24,6 +18,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,6 +41,9 @@ public class EventService {
 
     @Autowired
     private EventTypeRepository eventTypeRepository;
+
+    @Autowired
+    private RatingsRepository ratingsRepository;
 
     @Transactional
     public Event createEvent(Long userId, CreateEventRequest request) throws Exception{
@@ -109,6 +107,18 @@ public class EventService {
         return participation;
     }
 
+    public Event leaveEvent(Long userId, Long eventId) throws Exception{
+        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (!optionalEvent.isPresent())
+            throw new Exception("No such event with id : " + eventId);
+        if (!optionalUser.isPresent())
+            throw new Exception(("No such user with id : " + userId));
+        Participation participation = participationRepository.findByUser_IdAndEvent_Id(optionalUser.get().getId(), optionalEvent.get().getId());
+        participationRepository.delete(participation);
+        return optionalEvent.get();
+    }
+
     public UserEventsTimeResponse getUserEvents(Long userId) {
         List<Event> hostedEvents = participationRepository.findByUser_IdAndParticipationType(userId, ParticipationType.HOST)
                 .stream().map(Participation::getEvent).collect(Collectors.toList());
@@ -150,7 +160,8 @@ public class EventService {
         response.setRemainingSpots(remainingSpots);
 
         List<User> attendees = participationList.stream().filter(U -> U.getParticipationType() == ParticipationType.ATTENDEE).map(Participation::getUser).collect(Collectors.toList());
-        response.setAttendees(attendees);
+        //response.setAttendees(attendees);
+        setRatings(userId, eventId, attendees, response);
         User host = participationList.stream().filter(U -> U.getParticipationType() == ParticipationType.HOST).map(Participation::getUser).collect(Collectors.toList()).get(0);
         response.setHost(host);
 
@@ -159,6 +170,42 @@ public class EventService {
             response.setParticipationType(participation.getParticipationType().getKey());
 
         return response;
+    }
+
+    private void setRatings(Long userId, Long eventId, List<User> attendees, GetEventResponse response) {
+        for (User attendee : attendees) {
+            attendee.setRated(false);
+            Ratings ratings = ratingsRepository.findByUser_IdAndRater_IdAndEvent_Id(attendee.getId(), userId, eventId);
+            if (Objects.nonNull(ratings)) {
+                attendee.setRated(true);
+                attendee.setReview(ratings.getReview());
+                attendee.setSkillRating(ratings.getSkillRating());
+                attendee.setSocialRating(ratings.getSocialRating());
+            }
+        }
+        response.setAttendees(attendees);
+    }
+
+    public List<Event> searchEvent(String eventType, String eventName, String location, Long time) throws Exception{
+        List<Event> events = eventRepository.findAll();
+        if (!StringUtils.isEmpty(eventType)) {
+            events = events.stream()
+                    .filter(e -> e.getEventType().getType().toLowerCase().contains(eventType.toLowerCase())).collect(Collectors.toList());
+        }
+        if (!StringUtils.isEmpty(eventName)) {
+            events = events.stream()
+                    .filter(e -> e.getName().toLowerCase().contains(eventName.toLowerCase())).collect(Collectors.toList());
+        }
+        if (!StringUtils.isEmpty(location)) {
+            events = events.stream()
+                    .filter(e -> e.getLocation().toLowerCase().contains(location.toLowerCase())).collect(Collectors.toList());
+        }
+        if (!StringUtils.isEmpty(time)) {
+            LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault());
+            events = events.stream()
+                    .filter(e -> e.getTime().toLocalDate().isEqual(localDateTime.toLocalDate())).collect(Collectors.toList());
+        }
+        return events;
     }
 
 }

@@ -30,6 +30,18 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Transient
+    private Boolean rated = false;
+    
+    @Transient
+    private Long skillRating;
+
+    @Transient
+    private Long socialRating;
+
+    @Transient
+    private String review;
+
     public Long getId() {
         return id;
     }
@@ -78,6 +90,38 @@ public class User {
         this.password = password;
     }
 
+    public Boolean getRated() {
+        return rated;
+    }
+
+    public void setRated(Boolean rated) {
+        this.rated = rated;
+    }
+
+    public Long getSkillRating() {
+        return skillRating;
+    }
+
+    public void setSkillRating(Long skillRating) {
+        this.skillRating = skillRating;
+    }
+
+    public Long getSocialRating() {
+        return socialRating;
+    }
+
+    public void setSocialRating(Long socialRating) {
+        this.socialRating = socialRating;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -87,6 +131,10 @@ public class User {
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 ", password='" + password + '\'' +
+                ", rated=" + rated +
+                ", skillRating=" + skillRating +
+                ", socialRating=" + socialRating +
+                ", review='" + review + '\'' +
                 '}';
     }
 }
