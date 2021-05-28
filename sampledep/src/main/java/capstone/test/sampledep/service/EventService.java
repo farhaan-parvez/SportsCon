@@ -115,7 +115,11 @@ public class EventService {
         if (!optionalUser.isPresent())
             throw new Exception(("No such user with id : " + userId));
         Participation participation = participationRepository.findByUser_IdAndEvent_Id(optionalUser.get().getId(), optionalEvent.get().getId());
-        participationRepository.delete(participation);
+        Event event = participation.getEvent();
+        if (event.getTime().isBefore(LocalDateTime.now())
+                && Objects.equals(participation.getParticipationType(), ParticipationType.ATTENDEE)) {
+            participationRepository.delete(participation);
+        }
         return optionalEvent.get();
     }
 
