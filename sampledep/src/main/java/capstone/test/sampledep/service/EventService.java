@@ -116,11 +116,13 @@ public class EventService {
             throw new Exception(("No such user with id : " + userId));
         Participation participation = participationRepository.findByUser_IdAndEvent_Id(optionalUser.get().getId(), optionalEvent.get().getId());
         Event event = participation.getEvent();
-        if (event.getTime().isBefore(LocalDateTime.now())
+        if (event.getTime().isAfter(LocalDateTime.now())
                 && Objects.equals(participation.getParticipationType(), ParticipationType.ATTENDEE)) {
             participationRepository.delete(participation);
+            return optionalEvent.get();
+        } else {
+            throw new Exception(("Event has already finished or User is Host"));
         }
-        return optionalEvent.get();
     }
 
     public UserEventsTimeResponse getUserEvents(Long userId) {
@@ -191,7 +193,10 @@ public class EventService {
     }
 
     public List<Event> searchEvent(String eventType, String eventName, String location, Long time) throws Exception{
-        List<Event> events = eventRepository.findAll();
+        List<Event> events = eventRepository.findAll().stream()
+                .filter(e -> Objects.equals(e.getScope(), Scope.PUBLIC))
+                .filter(e -> e.getTime().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
         if (!StringUtils.isEmpty(eventType)) {
             events = events.stream()
                     .filter(e -> e.getEventType().getType().toLowerCase().contains(eventType.toLowerCase())).collect(Collectors.toList());
