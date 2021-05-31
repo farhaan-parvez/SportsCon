@@ -50,6 +50,7 @@ public class UserService {
         user.setPhone(registerUserRequest.getPhone());
         user.setName(registerUserRequest.getName());
         user.setPassword(registerUserRequest.getPassword());
+        user.setImage(registerUserRequest.getImage());
         return userRepository.save(user);
     }
 
@@ -61,6 +62,7 @@ public class UserService {
         user.setPhone(request.getPhone());
         user.setName(request.getName());
         user.setPassword(request.getPassword());
+        user.setImage(request.getImage());
         return userRepository.save(user);
     }
 

@@ -12,6 +12,8 @@ public class EditUserRequest {
 
     private String password;
 
+    private String image;
+
     public String getName() {
         return name;
     }
@@ -36,12 +38,21 @@ public class EditUserRequest {
         this.password = password;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "EditUserRequest{" +
                 "name='" + name + '\'' +
                 ", phone=" + phone +
                 ", password='" + password + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }

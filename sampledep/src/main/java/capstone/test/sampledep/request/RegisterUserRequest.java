@@ -23,6 +23,8 @@ public class RegisterUserRequest {
     @NonNull
     private String password;
 
+    private String image;
+
     public String getName() {
         return name;
     }
@@ -55,6 +57,14 @@ public class RegisterUserRequest {
         this.password = password;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "RegisterUserRequest{" +
@@ -62,6 +72,7 @@ public class RegisterUserRequest {
                 ", phone=" + phone +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }

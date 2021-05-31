@@ -30,6 +30,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "image")
+    private String image;
+
     @Transient
     private Boolean rated = false;
     
@@ -122,6 +125,14 @@ public class User {
         this.review = review;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -131,6 +142,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 ", password='" + password + '\'' +
+                ", image='" + image + '\'' +
                 ", rated=" + rated +
                 ", skillRating=" + skillRating +
                 ", socialRating=" + socialRating +
