@@ -3,24 +3,13 @@ package capstone.test.sampledep.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.NonNull;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 @JsonIgnoreProperties
-public class RegisterUserRequest {
+public class EditUserRequest {
 
-    @NonNull
     private String name;
 
     private Long phone;
 
-    @NonNull
-    private String email;
-
-
-    @NonNull
     private String password;
 
     private String image;
@@ -41,14 +30,6 @@ public class RegisterUserRequest {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -67,10 +48,9 @@ public class RegisterUserRequest {
 
     @Override
     public String toString() {
-        return "RegisterUserRequest{" +
+        return "EditUserRequest{" +
                 "name='" + name + '\'' +
                 ", phone=" + phone +
-                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", image='" + image + '\'' +
                 '}';

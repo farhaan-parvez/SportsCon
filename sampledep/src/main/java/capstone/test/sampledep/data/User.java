@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "sc_user")
-@JsonIgnoreProperties
+//JsonIgnoreProperties("password")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "sc_user_id_seq")
@@ -29,6 +29,21 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "image")
+    private String image;
+
+    @Transient
+    private Boolean rated = false;
+    
+    @Transient
+    private Long skillRating;
+
+    @Transient
+    private Long socialRating;
+
+    @Transient
+    private String review;
 
     public Long getId() {
         return id;
@@ -78,6 +93,46 @@ public class User {
         this.password = password;
     }
 
+    public Boolean getRated() {
+        return rated;
+    }
+
+    public void setRated(Boolean rated) {
+        this.rated = rated;
+    }
+
+    public Long getSkillRating() {
+        return skillRating;
+    }
+
+    public void setSkillRating(Long skillRating) {
+        this.skillRating = skillRating;
+    }
+
+    public Long getSocialRating() {
+        return socialRating;
+    }
+
+    public void setSocialRating(Long socialRating) {
+        this.socialRating = socialRating;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -87,6 +142,11 @@ public class User {
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 ", password='" + password + '\'' +
+                ", image='" + image + '\'' +
+                ", rated=" + rated +
+                ", skillRating=" + skillRating +
+                ", socialRating=" + socialRating +
+                ", review='" + review + '\'' +
                 '}';
     }
 }
